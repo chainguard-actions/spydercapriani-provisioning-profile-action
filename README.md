@@ -1,1 +1,15 @@
-# spydercapriani-provisioning-profile-action
+# spydercapriani/provisioning-profile-action
+
+Manage provisioning profiles for iOS projects
+
+Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/spydercapriani/provisioning-profile-action](https://github.com/spydercapriani/provisioning-profile-action).
+
+## Versions
+
+| Version | Tag | Upstream commit | Hardening report |
+|---------|-----|-----------------|------------------|
+| v1.1.0 | [`v1.1.0`](https://github.com/chainguard-actions/spydercapriani-provisioning-profile-action/tree/v1.1.0) | [`d867cfe`](https://github.com/spydercapriani/provisioning-profile-action/commit/d867cfed057cd60cd267e889ea9f0c24c360b224) | [`HARDENING.md`](https://github.com/chainguard-actions/spydercapriani-provisioning-profile-action/blob/v1.1.0/HARDENING.md) |
+
+## Privacy
+
+This Action contacts Chainguard's licensing server to verify authorization. Connection metadata (IP address, GitHub repository identifier, timestamp, and any metadata encoded in the auth token) is transmitted to Chainguard, Inc. even if authorization is denied in accordance with our [Privacy Notice](https://www.chainguard.dev/legal/privacy-notice)
