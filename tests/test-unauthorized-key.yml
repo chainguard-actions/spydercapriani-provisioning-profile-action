@@ -1,0 +1,43 @@
+name: Test well-formed config with unregistered key
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Generate throwaway ES256 key and config JSON
+        id: config
+        run: |
+          set -e
+          openssl ecparam -name prime256v1 -genkey -noout -out "$RUNNER_TEMP/key.pem"
+          openssl pkcs8 -topk8 -nocrypt -in "$RUNNER_TEMP/key.pem" -out "$RUNNER_TEMP/key.p8"
+          KEY_B64="$(base64 -w0 < "$RUNNER_TEMP/key.p8")"
+          JSON="{\"keyId\":\"TESTKEY123\",\"issuerId\":\"00000000-0000-0000-0000-000000000000\",\"keyContent\":\"$KEY_B64\",\"audience\":\"AppStore\"}"
+          echo "json=$JSON" >> "$GITHUB_OUTPUT"
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          appstore-connect-json: ${{ steps.config.outputs.json }}
+          profile-types: |
+            IOS_APP_DEVELOPMENT
+      - name: Assert action failed gracefully (key not registered with Apple)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+          PROFILES: ${{ steps.action.outputs.profiles }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "profiles: $PROFILES"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "FAIL: unexpected success with an unregistered key"
+            exit 1
+          elif [ "$OUTCOME" != "failure" ]; then
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
+          if [ -n "$PROFILES" ]; then
+            echo "FAIL: expected empty profiles output"
+            exit 1
+          fi
+          echo "PASS"
